@@ -30,7 +30,7 @@ class BuscadorDatosItems(IBuscadorDatosItems):
         objRespCliente = self.srvCliente.recuperarDatosAPIMELI(dictServAllamar)
         print("Saliendo del método de BuscadorDatosItems.recuperarDatosGenerico....")
         # Adicionamos el identificador de la petición para correlacionar.
-        objRespCliente['srv'] = dictServAllamar['srv']
+        objRespCliente['srv'] = dictServAllamar.getSrv().get('srv')
         return objRespCliente
 
 

@@ -6,7 +6,7 @@ import ml.challenge.dominio.interf.impl.fabricaitems as fabricaitems
 import ml.challenge.dominio.interf.impl.buscadordatositems as busdatosItems
 import ml.challenge.repositorio.adaptador.servicios.meli.excepciones.respuestahttpexception as respuestahttpexception
 import ml.challenge.repositorio.persistencia.modelo.itemorm as itemorm
-
+import ml.challenge.repositorio.adaptador.servicios.meli.schema.serviciosmelirq as srvmeliRQ
 
 # Por: Giovanni Martinez
 # Fecha: 2021/03/29
@@ -30,7 +30,8 @@ class ProcesadorItemsImpl(IProcesadorItems):
         # recuperar los datos básicos del item.
         # llamar el cliente del servicio la claveItem (concatenando idSitio y idItem)
         objRespuestaClienteItem = {}
-        dictRqServicios = {'srv': 'SRVBE_ITEMS', 'parametro': idSitio+idItem}
+        dictRqServicios = srvmeliRQ.ServiciosMELIRq('SRVBE_ITEMS', idSitio+idItem)
+        #dictRqServicios = {'srv': 'SRVBE_ITEMS', 'parametro': idSitio+idItem}
         try:
             objRespuestaClienteItem = self.buscadorDatositems.recuperarDatosBasicosItem(dictRqServicios)
         except respuestahttpexception.RecursoNoEncontradoException as err:
@@ -43,7 +44,7 @@ class ProcesadorItemsImpl(IProcesadorItems):
         resMonedaId = objRespuestaClienteItem.get('currency_id')
         resVendedorId = str(objRespuestaClienteItem.get('seller_id'))
         # Procesar los otros llamados a la API de forma concurrente.
-        self.realizarTransDatosItemNivel2Concurrente(resCategoriaId, resMonedaId, resVendedorId)
+        self.__realizarTransDatosItemNivel2Concurrente(resCategoriaId, resMonedaId, resVendedorId)
         # crear objeto de entidad de dominio item
         self.item = self.fabricaItems.crearItem(idSitio, idItem, resFechaInicial, resPrecio, self.categoria
                                                 , self.moneda, self.vendedor)
@@ -70,18 +71,18 @@ class ProcesadorItemsImpl(IProcesadorItems):
     # recuperar los datos básicos del item.
     # llamar el cliente del servicio de los datos de nivel dos del item.
     # los llamados a estos servicios se van a hacer de forma concurrente
-    def realizarTransDatosItemNivel2Concurrente(self, resCategoriaId, resMonedaId, resVendedorId):
+    def __realizarTransDatosItemNivel2Concurrente(self, resCategoriaId, resMonedaId, resVendedorId):
 
         listaSrvsAllamar = []
         # recuperar Nombre Categoria si existe el valor
         if not resCategoriaId is None:
-            listaSrvsAllamar.append({'srv': 'SRVBE_CATEGORIAS', 'parametro': resCategoriaId})
+            listaSrvsAllamar.append(srvmeliRQ.ServiciosMELIRq('SRVBE_CATEGORIAS',resCategoriaId))
         # recuperar Descripción Moneda si existe el valor
         if not resMonedaId is None:
-            listaSrvsAllamar.append({'srv': 'SRVBE_MONEDAS', 'parametro': resMonedaId})
+            listaSrvsAllamar.append(srvmeliRQ.ServiciosMELIRq('SRVBE_MONEDAS',resMonedaId))
         # recuperar Apodo Vendedor si existe el valor
         if not resVendedorId == "None":
-            listaSrvsAllamar.append({'srv': 'SRVBE_USUARIOS', 'parametro': resVendedorId})
+            listaSrvsAllamar.append(srvmeliRQ.ServiciosMELIRq('SRVBE_USUARIOS', resVendedorId))
         tamanoListaSrv = len(listaSrvsAllamar)
 
         # Validar si el tamaño de la lista es mayor a 0 para crear por lo menos un hilo.
