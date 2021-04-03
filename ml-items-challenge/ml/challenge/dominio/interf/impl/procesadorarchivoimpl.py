@@ -2,16 +2,11 @@ import abc
 import multiprocessing
 import threading
 import os
-import sys
 import time
 import csv
 import concurrent.futures
-
 import sqlalchemy
-
 import ml.challenge.dominio.interf.impl.procesadoritemsimpl as procesadoritemsimpl
-import mysql.connector.errors as errorsmql
-
 from ml.challenge.dominio.interf.iprocesadorarchivo import IProcesadorArchivo
 # Por: Giovanni Martinez
 # Fecha: 2021/03/29
@@ -65,16 +60,18 @@ class ProcesadorArchivoImpl(IProcesadorArchivo):
     def setEncodingArchivo(self, numWorkers):
         self.__numWorkers = numWorkers
 
-    # Procesa un archivo de tipo streameable con los siguientes parametros para su lectura.
+    # Método que procesa un archivo de tipo streameable con los siguientes parametros para su lectura.
     def procesarArchivoStreameable(self):
         print("Entrando al método de ProcesadorArchivoImpl.leerArchivoStreameable....")
 
         nombreCompletoArchivo = self.__nombreArchivo+"."+self.__formatoArchivo
-        print(f'Tamaño del archivo es {os.stat(nombreCompletoArchivo).st_size / (1024 * 1024)} MB')
+        print(f'Archivo ha leer:  {nombreCompletoArchivo}, Tamaño del archivo es {os.stat(nombreCompletoArchivo).st_size / (1024 * 1024)} MB')
 
+        # Empezar a contar el tiempo del procesamiento del archivo.
         start_time = time.time()
+        # Abrir el archivo que está en la configuración
         with open(nombreCompletoArchivo, encoding=self.__encodingArchivo) as archivo:
-            datareader = csv.reader(archivo, delimiter=",")
+            datareader = csv.reader(archivo, delimiter=self.__separadorColumnasArc)
             header = next(datareader)
             print(f'Header {header}')
             count = 0
@@ -83,6 +80,7 @@ class ProcesadorArchivoImpl(IProcesadorArchivo):
                 futures = []
                 for registro in datareader:
                     futures.append(executor.submit(self.__procesarRegistro, registro=registro))
+                # Validar si la respuesta de la ejecución fue error para loguearlo en el sistema.
                 for future in concurrent.futures.as_completed(futures):
                     count += 1
                     try:
@@ -94,10 +92,12 @@ class ProcesadorArchivoImpl(IProcesadorArchivo):
 
         respuesta = ("Tiempo de procesamiento %s seconds" % (time.time() - start_time))
         print(f'Número de lineas procesadas del archivo es: {count}')
+        print(respuesta)
         print("Saliendo del método de ProcesadorArchivoImpl.leerArchivoStreameable....")
-        return respuesta + "Registros: " + (str(count))
+        objRespuesta = {'tiempo': respuesta, 'registrosProcesados': count}
+        return objRespuesta
 
-    # Procesa un registro que representa un item,de un archivo, para ejecutarlo con hilos concurrentes.
+    # Método que procesa un registro que representa un item,de un archivo, para ejecutarlo con hilos concurrentes.
     def __procesarRegistro(self, registro):
         print("PID: %s, Process Name: %s, Thread Name: %s" % (
             os.getpid(),
@@ -108,4 +108,6 @@ class ProcesadorArchivoImpl(IProcesadorArchivo):
         idItem = registro[1]
         # Instanciamos el objeto de dominio ProcesadorItemsImpl para cada registro
         procitem_ = procesadoritemsimpl.ProcesadorItemsImpl()
-        procitem_.procesarItem(idSitio, idItem)
+        procitem_.realizarTransformacionesItem(idSitio, idItem)
+        # Guarda el item procesado.
+        procitem_.guardarItem()

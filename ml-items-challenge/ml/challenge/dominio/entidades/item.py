@@ -86,3 +86,10 @@ class Item:
                                   nickname=( None if not self.__vendedor else self.__vendedor.getApodoVendedor()))
         itemper.save()
         print("Saliendo al método de Item.persistir....")
+
+    # Metodo para eliminar todos los items que están persistidos
+    def eliminarTodosLosItems(self):
+        print("Entrando al método de Item.eliminarTodosLosItems....")
+        itemper = itemorm.ItemORM()
+        itemper.deleteAll()
+        print("Saliendo al método de Item.eliminarTodosLosItems....")

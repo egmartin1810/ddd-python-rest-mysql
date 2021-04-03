@@ -14,9 +14,16 @@ class ItemORM(db.Model):
     nickname = db.Column(db.String(40), nullable=True)
 
     def save(self):
-        print("El estado el pool de DS es: " + db.engine.pool.status())
+        print("El estado del pool de la BD es: " + db.engine.pool.status())
         db.session.add(self)
         db.session.commit()
+
+    def deleteAll(self):
+        print("Eliminando TODOS los datos persistidos de Items...")
+        registrosEliminados = db.session.query(ItemORM).delete()
+        db.session.commit()
+        print("Saliendo de ItemORM.deleteAll, Registros Eliminados: ", registrosEliminados)
+        return registrosEliminados
 
     def __repr__(self):
         return '<Item {}>'.format(self.site+str(self.id))
