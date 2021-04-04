@@ -1,67 +1,21 @@
-# ddd-python-rest-mysql
+# Desafío Teórico
 Proyecto que consiste en armar un servicio web que exponga un endpoint para leer un archivo, consultar una serie de APIs públicas y cargar una base de datos con los datos del archivo y las consultas a las APIs, construido con patrones de diseño, concurrencia y Domain Driven Design.
 
-### Prerequisitos
+### Procesos, hilos y corrutinas
 
-**1:** Clonar el proyecto a través del cliente git o desde desde un navegador.
-```
-git clone https://github.com/egmartin1810/ddd-python-rest-mysql.git
-```
-**2:** Tener Docker instalado de la página oficial: https://docs.docker.com/get-docker/. (instalar la última versión de Docker en su sistema operativo).
+**1.** Un caso en el que usarías procesos para resolver un problema y por qué..
 
-### Instalación
+Un caso podría ser un sistema de negociación de acciones (Algorithmic Trading y Traders negociando acciones o bonos de deuda), debido a que es un sistema de misión crítica donde es importante la resiliencia y la seguridad, por usuario o conexión, debido a que los cálculos que se realizan son complejos y requiere bastante uso CPU (intensivo) y si en un modelo de hilos, una petición falla no afecte a todo el programa generando una indisponibilidad.  
 
-**Paso 1:** Estar dentro del directorio del proyecto que fue clonado:
+**2.** Un caso en el que usarías threads para resolver un problema y por qué..
 
-```
-cd ddd-python-rest-mysql
-```
+El caso sería en una aplicación web o servicios web, como un portal público, donde la transaccionalidad no sea tan elevada (10 peticiones/segundo - que esté muy por debajo del límite de hilos del servidor) y tenga que realizar tareas intensivas de instrucciones de E/S como Consultas a Base de Datos o archivos y así alcanzar, debido a que por no tener una alta transaccionalidad o throughput y con tareas intensivas de E/S, sería una aplicación costo/eficiente, no estando en riesgo alcanzar el límite de los hilos de servidor y alcanzando el rendimiento, la velocidad de ejecución esperada y consume menos recursos que utilizando multiprocesos.  
 
-**Paso 2:** Ejecutar los contenedores:
+**3.** Un caso en el que usarías corrutinas para resolver un problema y por qué.:
 
-```
-docker-compose up -d --build 
-```
-**Paso 3:** Verificar que los contenedores estén ejecutando.
+Un caso sería para una aplicación web o un servicio restful, en el cual se tiene una transaccionalidad alta (cargas de trabajo muy elevadas), ya se está llegando al límite de hilos, se tienen los mismos recursos (CPU, Memoria, etc) y se tienen intrucciones intensas de E/S (la red puede estar bloqueada), se podría hacer una optimización de recursos y rendimiento con corrutinas, debido a que la corrutina es mucho más ligera que el hilo, en donde por ser basada en programación asincrónica suspenden su ejecución en momentos (bloqueos),  mientras esperan un determinado recurso y se reanudan  (partes de una aplicación cooperan para cambiar tareas explícitamente en momentos óptimos) 
 
-```
-docker-compose ps -a
-```
+**4:** Si tuvieras 1.000.000 de elementos y tuvieras que consultar para cada uno de ellos
+información en una API HTTP. ¿Cómo lo harías? Explicar.
 
-**Paso 4:** Verificar que la aplicación subió correctamente.
-
-```
-docker logs ddd-python-rest-mysql_app_1
-
-```
-
-**Paso 5:** Verificar que la Base de Datos mysql subió correctamente.
-
-```
-docker exec -it ddd-python-rest-mysql_db_1 mysql -uroot -p
-
-```
-le solicita el password el cual es: root
-
-y revisar que la tabla meli.item se encuentre, en la consola de mysql:
-
-```
- select * from meli.item;
-
-```
-
-**Paso 6:** Ejecutar el servicio rest expuesto por la aplicación creada.
-
-```
-curl -X POST http://127.0.0.1:5000/api/v1/almacenardatositems
-
-```
-
-**Paso 7:** Una vez de tener la respuesta del servicio rest, Validar que los 2000 registros estén en la tabla meli.item.
-
-```
-comando: docker exec -it ddd-python-rest-mysql_db_1 mysql -uroot -p
-password: root
-select * from meli.item; 
-
-```
+Lo haría a través de programación concurrente y asincrónica; usando hilos y corrutinas. Primero buscar el número de hilos óptimo para así configurar el ThreadPool y dentro de cada tarea que ejecuta cada hilo (que representaría el procesamiento de cada uno de los 1 '000.000 elementos), llama la corrutina que hace la consulta a la API HTTP. 
