@@ -18,4 +18,4 @@ Un caso sería para una aplicación web o un servicio restful, en el cual se tie
 **4:** Si tuvieras 1.000.000 de elementos y tuvieras que consultar para cada uno de ellos
 información en una API HTTP. ¿Cómo lo harías? Explicar.
 
-Lo haría a través de programación concurrente y asincrónica; usando hilos y corrutinas. Primero buscar el número de hilos óptimo para así configurar el ThreadPool y dentro de cada tarea que ejecuta cada hilo (que representaría el procesamiento de cada uno de los 1 '000.000 elementos), llama la corrutina que hace la consulta a la API HTTP. 
+Lo haría a través de programación concurrente (hilos y co-rrutinas) y asincrónica; usando hilos y corrutinas. Primero buscar el número de hilos óptimo para así configurar el ThreadPool y dentro de cada tarea que ejecuta cada hilo dividir el número de elementos por bloques a procesar (que representaría el procesamiento de un grupo de elementos/hilo  - 1 '000.000/nro de hilos y así partiría el 1'millón de elementos) y la corrutina haría la consulta a la API HTTP (asycrónicamente) por grupo de elementos. 
