@@ -69,3 +69,5 @@ select * from meli.item;
 ## Documentación y Desafío Técnico:
 
 Por último dentro de la carpera documetnación de directorio del proyecto, podemos encontrar el documento con el detalle de la instalación de la aplicación, un documento técnico con unos diagramas muy explicativos de la solución y la respuesta del Desafío Teórico.
+
+https://github.com/egmartin1810/ddd-python-rest-mysql/tree/master/documentaci%C3%B3n
