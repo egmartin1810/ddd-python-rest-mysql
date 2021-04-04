@@ -22,10 +22,46 @@ cd ddd-python-rest-mysql
 ```
 docker-compose up -d --build 
 ```
-**Step 3:** Verificar que los contenedores estén ejecutando.
+**Paso 3:** Verificar que los contenedores estén ejecutando.
 
 ```
 docker-compose ps -a
 ```
 
-**Step 3:** Verificar que los contenedores estén ejecutando.
+**Paso 4:** Verificar que la aplicación subió correctamente.
+
+```
+docker logs ddd-python-rest-mysql_app_1
+
+```
+
+**Paso 5:** Verificar que la Base de Datos mysql subió correctamente.
+
+```
+docker exec -it ddd-python-rest-mysql_db_1 mysql -uroot -p
+
+```
+le solicita el password el cual es: root
+
+y revisar que la tabla meli.item se encuentre, en la consola de mysql:
+
+```
+ select * from meli.item;
+
+```
+
+**Paso 6:** Ejecutar el servicio rest expuesto por la aplicación creada.
+
+```
+curl -X POST http://127.0.0.1:5000/api/v1/almacenardatositems
+
+```
+
+**Paso 7:** Una vez de tener la respuesta del servicio rest, Validar que los 2000 registros estén en la tabla meli.item.
+
+```
+comando: docker exec -it ddd-python-rest-mysql_db_1 mysql -uroot -p
+password: root
+select * from meli.item; 
+
+```
