@@ -26,11 +26,4 @@ class Categoria:
         self.__nombreCategoria = nombreCategoria
 
     def __str__(self):
-        return "idCategoria: " + self.__idCategoria + ", nombreCategoria: "
-
-    # Métodos
-    # Recupera los datos básicos de la entidad Categoría, de un servicio tercero: nombreCategoria
-    def recuperarDatosBasicosCategoria(self, idCategoria):
-        print("Entrando al método de Categoria.recuperarDatosBasicosCategoria....")
-
-        print("Saliendo al método de Categoria.recuperarDatosBasicosCategoria....")
+        return "idCategoria: " + self.__idCategoria + ", nombreCategoria: " +self.__nombreCategoria

@@ -24,10 +24,3 @@ class Vendedor:
 
     def setApodoVendedor(self, apodoVendedor):
         self.__apodoVendedor = apodoVendedor
-
-    # Métodos
-    # Recupera los datos básicos de la entidad Vendedor, de un servicio tercero: apodoVendedor
-    def recuperarDatosBasicosMoneda(self, idVendedor):
-        print("Entrando al método de Moneda.recuperarDatosBasicosMoneda....")
-
-        print("Saliendo al método de Moneda.recuperarDatosBasicosMoneda....")

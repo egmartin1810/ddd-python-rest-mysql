@@ -25,10 +25,3 @@ class Moneda:
 
     def setDescripcionMoneda(self, descripcionMoneda):
         self.__descripcionMoneda
-
-    # Métodos
-    # Recupera los datos básicos de la entidad Moneda, de un servicio tercero: descripcionMoneda
-    def recuperarDatosBasicosMoneda(self, idMoneda):
-        print("Entrando al método de Moneda.recuperarDatosBasicosMoneda....")
-
-        print("Saliendo al método de Moneda.recuperarDatosBasicosMoneda....")

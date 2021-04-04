@@ -8,7 +8,6 @@ class ArchivoLecturaStrmable():
     __formatoArchivo = ""
     __separadorColumnasArc = ""
     __encodingArchivo = ""
-    __numWorkers = 5
 
     # Constructor
     def __init__(self, nombreArchivo, formatoArchivo, separadorColumnasArc, encodingArchivo):
